@@ -37,7 +37,7 @@ const featuresData = {
         { "id": "moderation_tools", "price": 450, "icon": "ShieldIcon", "isEssential": true  },
         { "id": "forum_profiles", "price": 400, "icon": "AwardIcon", "isEssential": true  },
         { "id": "forum_topics", "price": 450, "icon": "MessageCircleIcon", "isEssential": true  },
-        { "id": "nested_replies", "price": 400, "icon": "GitMergeIcon" },
+        { "id": "nested_replies", "price": 400, "icon": "GitMergeIcon", "isEssential": true  },
         { "id": "polls", "price": 300, "icon": "BarChart2Icon" },
         { "id": "social_interaction", "price": 250, "icon": "Share2Icon" },
         { "id": "forum_notifications", "price": 300, "icon": "BellIcon" },
