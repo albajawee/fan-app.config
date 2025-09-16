@@ -12,8 +12,8 @@ const featuresData = {
       "icon": "CoreIcon",
       "features": [
         { "id": "account_management", "price": 550, "icon": "UserIcon", "isEssential": true },
-        { "id": "events", "price": 250, "icon": "CalendarIcon", "isEssential": true  },
-        { "id": "push_notifications", "price": 400, "icon": "BellIcon", "isEssential": true  },
+        { "id": "events", "price": 300, "icon": "CalendarIcon", "isEssential": true  },
+        { "id": "push_notifications", "price": 450, "icon": "BellIcon", "isEssential": true  },
         { "id": "cms", "price": 200, "icon": "FileTextIcon" },
         { "id": "bilingual_support", "price": 750, "icon": "GlobeIcon" },
         { "id": "live_match_center", "price": 650, "icon": "WatchIcon" }
@@ -23,10 +23,10 @@ const featuresData = {
       "id": "ecommerce",
       "icon": "EcommerceIcon",
       "features": [
-        { "id": "product_management", "price": 200, "icon": "PackageIcon", "isEssential": true  },
+        { "id": "product_management", "price": 250, "icon": "PackageIcon", "isEssential": true  },
         { "id": "order_management", "price": 450, "icon": "ClipboardListIcon", "isEssential": true  },
         { "id": "inventory_management", "price": 200, "icon": "ArchiveIcon", "isEssential": true  },
-        { "id": "discounts_coupons", "price": 150, "icon": "TicketIcon" },
+        { "id": "discounts_coupons", "price": 200, "icon": "TicketIcon" },
         { "id": "online_payment", "price": 600, "icon": "CreditCardIcon" },
         { "id": "reviews_ratings", "price": 150, "icon": "MessageSquareIcon" }
       ]
@@ -37,10 +37,10 @@ const featuresData = {
       "features": [
         { "id": "moderation_tools", "price": 300, "icon": "ShieldIcon", "isEssential": true  },
         { "id": "forum_profiles", "price": 350, "icon": "AwardIcon", "isEssential": true  },
-        { "id": "forum_topics", "price": 150, "icon": "MessageCircleIcon", "isEssential": true  },
+        { "id": "forum_topics", "price": 200, "icon": "MessageCircleIcon", "isEssential": true  },
         { "id": "nested_replies", "price": 200, "icon": "GitMergeIcon", "isEssential": true  },
         { "id": "polls", "price": 150, "icon": "BarChart2Icon" },
-        { "id": "social_interaction", "price": 200, "icon": "Share2Icon" },
+        { "id": "social_interaction", "price": 250, "icon": "Share2Icon" },
         { "id": "forum_notifications", "price": 300, "icon": "BellIcon" },
         
       ]
