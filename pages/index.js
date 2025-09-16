@@ -93,6 +93,9 @@ const ICONS = {
     Share2Icon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>,
     AwardIcon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>,
     ShieldIcon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>,
+    XIcon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>,
+    DownloadIcon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>,
+    EyeIcon: props => <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>,
 };
 const DynamicIcon = ({ name, ...props }) => {
     const IconComponent = ICONS[name];
@@ -128,8 +131,16 @@ const useCart = () => {
         
         try {
             const saved = localStorage.getItem('appConfigCart');
-            const savedItems = saved ? JSON.parse(saved) : [];
-            return [...new Set([...essentialItems, ...savedItems])];
+            if (saved) {
+                const savedItems = JSON.parse(saved);
+                // Only keep saved items that are not essential (user's choices)
+                const userChoices = savedItems.filter(itemId => {
+                    const feature = allFeatures.find(f => f.fullId === itemId);
+                    return feature && !feature.isEssential;
+                });
+                return [...essentialItems, ...userChoices];
+            }
+            return essentialItems;
         } catch (error) {
             return essentialItems;
         }
@@ -143,7 +154,12 @@ const useCart = () => {
 
     useEffect(() => {
         if (cartItems.length > 0) {
-            localStorage.setItem('appConfigCart', JSON.stringify(cartItems));
+            // Only save non-essential items (user's choices)
+            const userChoices = cartItems.filter(itemId => {
+                const feature = allFeatures.find(f => f.fullId === itemId);
+                return feature && !feature.isEssential;
+            });
+            localStorage.setItem('appConfigCart', JSON.stringify(userChoices));
         }
     }, [cartItems]);
 
@@ -410,8 +426,118 @@ const AnimatedNumber = ({ value }) => {
     return <span ref={ref}>{new Intl.NumberFormat('en-US').format(displayValue)}</span>;
 };
 
+const ReviewModal = ({ isOpen, onClose, selectedItems, total, t, onConfirm, isGenerating }) => {
+    const { XIcon, EyeIcon, DownloadIcon } = ICONS;
+    
+    const formatCurrency = useCallback((value) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
+    }, []);
+
+    if (!isOpen) return null;
+
+    return (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden animate-fade-in">
+                {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-slate-700">
+                    <div className="flex items-center gap-3">
+                        <EyeIcon className="w-6 h-6 text-yellow-400" />
+                        <div>
+                            <h2 className="text-xl font-bold text-white">{t('review.title')}</h2>
+                            <p className="text-slate-400 text-sm">{t('review.subtitle')}</p>
+                        </div>
+                    </div>
+                    <button 
+                        onClick={onClose}
+                        className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                        disabled={isGenerating}
+                    >
+                        <XIcon className="w-5 h-5 text-slate-400" />
+                    </button>
+                </div>
+
+                {/* Content */}
+                <div className="p-6 max-h-[60vh] overflow-y-auto">
+                    <h3 className="text-lg font-semibold text-white mb-4">{t('review.selected_features')}</h3>
+                    
+                    {/* Features by section */}
+                    {featuresData.sections.map(section => {
+                        const sectionFeatures = selectedItems.filter(item => item.sectionId === section.id);
+                        if (sectionFeatures.length === 0) return null;
+                        
+                        return (
+                            <div key={section.id} className="mb-6">
+                                <div className="flex items-center gap-3 mb-3">
+                                    <DynamicIcon name={section.icon} className="w-5 h-5 text-yellow-400" />
+                                    <h4 className="text-md font-semibold text-slate-300">{t(`section.${section.id}.title`)}</h4>
+                                </div>
+                                <div className="space-y-2">
+                                    {sectionFeatures.map(item => (
+                                        <div key={item.fullId} className="flex items-center justify-between bg-slate-700/50 p-3 rounded-lg">
+                                            <div className="flex items-center gap-3">
+                                                <DynamicIcon name={item.icon} className="w-4 h-4 text-slate-400" />
+                                                <div>
+                                                    <span className="text-white text-sm font-medium">{t(`feature.${item.id}.title`)}</span>
+                                                    {item.isEssential && (
+                                                        <span className="text-xs font-bold text-green-300 bg-green-500/20 px-2 py-0.5 rounded-full mr-2">
+                                                            {t('feature.essential_tag')}
+                                                        </span>
+                                                    )}
+                                                    <p className="text-slate-400 text-xs">{t(`feature.${item.id}.desc`)}</p>
+                                                </div>
+                                            </div>
+                                            <span className="text-yellow-400 font-semibold">{formatCurrency(item.price)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+
+                {/* Footer */}
+                <div className="p-6 border-t border-slate-700 bg-slate-800/50">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-lg font-bold text-white">{t('review.total_cost')}</span>
+                        <span className="text-2xl font-extrabold text-yellow-400">{formatCurrency(total)}</span>
+                    </div>
+                    
+                    <div className="flex gap-3">
+                        <button 
+                            onClick={onClose}
+                            className="flex-1 bg-slate-700 text-white font-semibold py-3 rounded-lg hover:bg-slate-600 transition-colors"
+                            disabled={isGenerating}
+                        >
+                            {t('review.cancel')}
+                        </button>
+                        <button 
+                            onClick={onConfirm}
+                            disabled={isGenerating}
+                            className="flex-1 bg-yellow-400 text-slate-900 font-bold py-3 rounded-lg hover:bg-yellow-300 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-2"
+                        >
+                            {isGenerating ? (
+                                <>
+                                    <div className="w-4 h-4 border-2 border-slate-900/30 border-t-slate-900 rounded-full animate-spin"></div>
+                                    {t('review.generating')}
+                                </>
+                            ) : (
+                                <>
+                                    <DownloadIcon className="w-4 h-4" />
+                                    {t('review.confirm_download')}
+                                </>
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const Cart = ({ cartItems, t, cartIconRef, onRemove }) => {
     const { EcommerceIcon, TrashIcon } = ICONS;
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [isGenerating, setIsGenerating] = useState(false);
     
     const selectedItems = useMemo(() => 
         cartItems.map(itemId => allFeatures.find(f => f.fullId === itemId)).filter(Boolean), 
@@ -427,144 +553,265 @@ const Cart = ({ cartItems, t, cartIconRef, onRemove }) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(value);
     }, []);
 
-    const handleGeneratePdf = () => {
+    const handleGeneratePdf = async () => {
         if (typeof window === 'undefined') return;
         
-        // Load jsPDF dynamically in browser
-        const loadJsPDF = async () => {
-            if (window.jspdf) return window.jspdf.jsPDF;
-            
-            const script1 = document.createElement('script');
-            script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
-            document.head.appendChild(script1);
-            
-            await new Promise(resolve => script1.onload = resolve);
-            
-            const script2 = document.createElement('script');
-            script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js';
-            document.head.appendChild(script2);
-            
-            await new Promise(resolve => script2.onload = resolve);
-            
-            return window.jspdf.jsPDF;
-        };
+        setIsGenerating(true);
+        
+        try {
+            // Load jsPDF dynamically in browser with Arabic font support
+            const loadJsPDF = async () => {
+                if (window.jspdf) return window.jspdf.jsPDF;
+                
+                const script1 = document.createElement('script');
+                script1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+                document.head.appendChild(script1);
+                
+                await new Promise(resolve => script1.onload = resolve);
+                
+                const script2 = document.createElement('script');
+                script2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js';
+                document.head.appendChild(script2);
+                
+                await new Promise(resolve => script2.onload = resolve);
+                
+                return window.jspdf.jsPDF;
+            };
 
-        loadJsPDF().then(jsPDF => {
+            const jsPDF = await loadJsPDF();
             const doc = new jsPDF();
             
-            // Title
-            doc.setFont('Helvetica', 'bold');
-            doc.setFontSize(22);
-            doc.text(t('pdf.title'), 105, 20, { align: 'center' });
+            // Configure for better Arabic support
+            const pageWidth = doc.internal.pageSize.getWidth();
+            const pageHeight = doc.internal.pageSize.getHeight();
             
-            // Date
+            // Header with English text to avoid Arabic issues
+            doc.setFont('Helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.text('Fan App Configuration Summary', pageWidth / 2, 25, { align: 'center' });
+            
             doc.setFont('Helvetica', 'normal');
             doc.setFontSize(12);
-            doc.text(new Date().toLocaleDateString('ar-EG'), 105, 30, { align: 'center' });
+            doc.text('Detailed Report of Selected Features', pageWidth / 2, 35, { align: 'center' });
+            
+            // Date
+            doc.setFontSize(10);
+            const currentDate = new Date().toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            doc.text(`Created: ${currentDate}`, pageWidth / 2, 45, { align: 'center' });
 
-            const tableData = selectedItems.map(item => [
-                formatCurrency(item.price),
-                t(`section.${item.sectionId}.title`),
-                t(`feature.${item.id}.title`)
-            ]);
+            // Create table data grouped by sections
+            let tableData = [];
+            
+            featuresData.sections.forEach(section => {
+                const sectionFeatures = selectedItems.filter(item => item.sectionId === section.id);
+                if (sectionFeatures.length === 0) return;
+                
+                // Section header
+                tableData.push([
+                    'Section', // Type
+                    getSectionNameInEnglish(section.id), // Feature name in English
+                    '', // Price column
+                    '' // Notes
+                ]);
+                
+                // Section features
+                sectionFeatures.forEach(item => {
+                    tableData.push([
+                        item.isEssential ? 'Essential' : 'Optional',
+                        getFeatureNameInEnglish(item.id),
+                        formatCurrency(item.price),
+                        item.isEssential ? 'Required' : 'Selected'
+                    ]);
+                });
+                
+                // Add spacing row
+                tableData.push(['', '', '', '']);
+            });
+
+            // Remove last empty row
+            if (tableData.length > 0) tableData.pop();
 
             const tableHeaders = [[
-                t('pdf.price'),
-                t('pdf.section'),
-                t('pdf.feature')
+                'Type',
+                'Feature',
+                'Price',
+                'Notes'
             ]];
             
             doc.autoTable({
                 head: tableHeaders,
                 body: tableData,
-                startY: 40,
+                startY: 55,
                 theme: 'grid',
                 styles: {
                     font: 'Helvetica',
-                    halign: 'right',
-                    cellPadding: 3,
-                    fontSize: 10
+                    fontSize: 9,
+                    cellPadding: 4,
+                    halign: 'left',
+                    lineColor: [200, 200, 200],
+                    lineWidth: 0.5
                 },
                 headStyles: {
-                    fillColor: [22, 100, 133],
+                    fillColor: [37, 99, 235], // Blue header
                     textColor: 255,
-                    fontStyle: 'bold'
+                    fontStyle: 'bold',
+                    fontSize: 10
+                },
+                columnStyles: {
+                    0: { halign: 'center', cellWidth: 25 }, // Type
+                    1: { halign: 'left', cellWidth: 90 },   // Feature
+                    2: { halign: 'center', cellWidth: 30 }, // Price
+                    3: { halign: 'center', cellWidth: 30 }  // Notes
                 },
                 alternateRowStyles: {
-                    fillColor: [240, 240, 240]
-                }
+                    fillColor: [248, 250, 252]
+                },
+                margin: { left: 15, right: 15 }
             });
 
-            const finalY = doc.lastAutoTable.finalY;
+            const finalY = doc.lastAutoTable.finalY + 20;
 
-            // Total
-            const totalText = `${t('cart.total')}: ${formatCurrency(total)}`;
-            doc.setFontSize(14);
+            // Total section
+            doc.setFillColor(37, 99, 235);
+            doc.rect(15, finalY, pageWidth - 30, 25, 'F');
+            
+            doc.setTextColor(255, 255, 255);
             doc.setFont('Helvetica', 'bold');
-            doc.text(totalText, doc.internal.pageSize.getWidth() -10, finalY + 20, { align: 'right' });
+            doc.setFontSize(16);
+            doc.text(`Total Cost: ${formatCurrency(total)}`, pageWidth / 2, finalY + 15, { align: 'center' });
 
-            doc.save('FanApp_Configuration.pdf');
-        }).catch(err => {
-            console.error('Error loading jsPDF:', err);
-            alert('Error loading PDF library. Please try again.');
-        });
+            // Footer with Raqeem.team
+            doc.setTextColor(100, 100, 100);
+            doc.setFont('Helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.text('Created by Raqeem.team', pageWidth / 2, pageHeight - 15, { align: 'center' });
+
+            // Save the PDF
+            doc.save(`FanApp_Configuration_${new Date().getTime()}.pdf`);
+            
+        } catch (err) {
+            console.error('Error generating PDF:', err);
+            alert('Error creating PDF. Please try again.');
+        } finally {
+            setIsGenerating(false);
+            setIsReviewModalOpen(false);
+        }
+    };
+
+    // Helper functions to get English names for PDF
+    const getSectionNameInEnglish = (sectionId) => {
+        const sectionNames = {
+            'core': 'Core Application',
+            'ecommerce': 'E-Commerce Store',
+            'forum': 'Interactive Forum',
+            'addons': 'Add-ons & Extras'
+        };
+        return sectionNames[sectionId] || sectionId;
+    };
+
+    const getFeatureNameInEnglish = (featureId) => {
+        const featureNames = {
+            'account_management': 'Account & Membership Management',
+            'events': 'Events & Activities Organization',
+            'push_notifications': 'Push Notifications',
+            'cms': 'Content Management',
+            'bilingual_support': 'Bilingual Interface',
+            'live_match_center': 'Live Match Center',
+            'product_management': 'Product Management',
+            'order_management': 'Order Management',
+            'inventory_management': 'Inventory Management',
+            'discounts_coupons': 'Discounts & Coupons',
+            'online_payment': 'Online Payment & Shopping Experience',
+            'reviews_ratings': 'Reviews & Ratings',
+            'forum_topics': 'Discussions & Topics',
+            'nested_replies': 'Comments & Replies',
+            'polls': 'Polls & Surveys',
+            'social_interaction': 'Social Interaction',
+            'forum_profiles': 'User Profiles',
+            'forum_notifications': 'Forum Notifications',
+            'moderation_tools': 'Forum Moderation Tools',
+            'addons_analytics': 'Analytics & AI Reports',
+            'addons_api': 'External API Integration',
+            'addons_maintenance': 'Maintenance & Hosting'
+        };
+        return featureNames[featureId] || featureId;
+    };
+
+    const handleReviewClick = () => {
+        setIsReviewModalOpen(true);
     };
 
     return (
-        <div className="sticky top-28 bg-slate-800/50 border border-slate-700 rounded-2xl shadow-lg p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h3 ref={cartIconRef} className="text-xl font-bold">{t('cart.title')}</h3>
-            </div>
-            {selectedItems.length === 0 ? (
-                <div className="text-center text-slate-400 py-12">
-                    <EcommerceIcon className="w-16 h-16 mx-auto text-slate-600 mb-4" />
-                    <p>{t('cart.empty')}</p>
-                </div>
-            ) : (
-                <div className="space-y-3 max-h-[300px] lg:max-h-[400px] overflow-y-auto pr-2 -mr-2">
-                    {selectedItems.map(item => (
-                        <div key={item.fullId} className="flex justify-between items-center bg-slate-700/50 p-3 rounded-lg animate-fade-in-up">
-                            <div className="flex items-center gap-3">
-                                <DynamicIcon name={item.icon} className="w-5 h-5 text-slate-400" />
-                                <span className="text-sm">{t(`feature.${item.id}.title`)}</span>
-                                {item.isEssential && <span className="text-xs font-bold text-green-300 bg-green-500/20 px-2 py-0.5 rounded-full">{t('feature.essential_tag')}</span>}
-                            </div>
-                            <div className="flex items-center gap-3">
-                                <span className="text-sm font-semibold">{formatCurrency(item.price)}</span>
-                                <button
-                                    onClick={() => onRemove(item.fullId)}
-                                    disabled={item.isEssential}
-                                    className={`text-slate-500 transition-colors ${item.isEssential ? 'cursor-not-allowed opacity-50' : 'hover:text-red-400'}`}
-                                >
-                                    <TrashIcon className="w-4 h-4"/>
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            )}
+        <>
+            <ReviewModal 
+                isOpen={isReviewModalOpen}
+                onClose={() => setIsReviewModalOpen(false)}
+                selectedItems={selectedItems}
+                total={total}
+                t={t}
+                onConfirm={handleGeneratePdf}
+                isGenerating={isGenerating}
+            />
             
-            {selectedItems.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-slate-700 space-y-2 text-sm">
-                    <div className="flex justify-between">
-                        <span className="text-slate-400">{t('cart.subtotal')}</span>
-                        <span className="font-semibold">{formatCurrency(subtotal)}</span>
-                    </div>
-                    <div className="flex justify-between text-lg">
-                        <span className="font-bold">{t('cart.total')}</span>
-                        <span className="text-yellow-400 font-extrabold text-2xl" aria-live="polite">
-                            {t('currency.usd')}<AnimatedNumber value={total} />
-                        </span>
-                    </div>
-                    <button 
-                        onClick={handleGeneratePdf}
-                        className="w-full mt-6 bg-yellow-400 text-slate-900 font-bold py-3 rounded-lg hover:bg-yellow-300 transition-colors transform hover:scale-[1.02]"
-                    >
-                        {t('cart.submit')}
-                    </button>
+            <div className="sticky top-28 bg-slate-800/50 border border-slate-700 rounded-2xl shadow-lg p-6">
+                <div className="flex justify-between items-center mb-4">
+                    <h3 ref={cartIconRef} className="text-xl font-bold">{t('cart.title')}</h3>
                 </div>
-            )}
-        </div>
+                {selectedItems.length === 0 ? (
+                    <div className="text-center text-slate-400 py-12">
+                        <EcommerceIcon className="w-16 h-16 mx-auto text-slate-600 mb-4" />
+                        <p>{t('cart.empty')}</p>
+                    </div>
+                ) : (
+                    <div className="space-y-3 max-h-[300px] lg:max-h-[400px] overflow-y-auto pr-2 -mr-2">
+                        {selectedItems.map(item => (
+                            <div key={item.fullId} className="flex justify-between items-center bg-slate-700/50 p-3 rounded-lg animate-fade-in-up">
+                                <div className="flex items-center gap-3">
+                                    <DynamicIcon name={item.icon} className="w-5 h-5 text-slate-400" />
+                                    <span className="text-sm">{t(`feature.${item.id}.title`)}</span>
+                                    {item.isEssential && <span className="text-xs font-bold text-green-300 bg-green-500/20 px-2 py-0.5 rounded-full">{t('feature.essential_tag')}</span>}
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <span className="text-sm font-semibold">{formatCurrency(item.price)}</span>
+                                    <button
+                                        onClick={() => onRemove(item.fullId)}
+                                        disabled={item.isEssential}
+                                        className={`text-slate-500 transition-colors ${item.isEssential ? 'cursor-not-allowed opacity-50' : 'hover:text-red-400'}`}
+                                    >
+                                        <TrashIcon className="w-4 h-4"/>
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+                
+                {selectedItems.length > 0 && (
+                    <div className="mt-6 pt-6 border-t border-slate-700 space-y-2 text-sm">
+                        <div className="flex justify-between">
+                            <span className="text-slate-400">{t('cart.subtotal')}</span>
+                            <span className="font-semibold">{formatCurrency(subtotal)}</span>
+                        </div>
+                        <div className="flex justify-between text-lg">
+                            <span className="font-bold">{t('cart.total')}</span>
+                            <span className="text-yellow-400 font-extrabold text-2xl" aria-live="polite">
+                                {t('currency.usd')}<AnimatedNumber value={total} />
+                            </span>
+                        </div>
+                        <button 
+                            onClick={handleReviewClick}
+                            className="w-full mt-6 bg-yellow-400 text-slate-900 font-bold py-3 rounded-lg hover:bg-yellow-300 transition-colors transform hover:scale-[1.02]"
+                        >
+                            {t('cart.submit')}
+                        </button>
+                    </div>
+                )}
+            </div>
+        </>
     );
 };
 

@@ -30,9 +30,9 @@ export const i18nData = {
     // Core App Features
     "feature.account_management.title": "إدارة الحسابات والعضويات", "feature.account_management.desc": "تسجيل دخول، ملفات شخصية، ومستويات عضوية.",
     "feature.events.title": "تنظيم النشاطات والفعاليات", "feature.events.desc": "إنشاء وعرض الأنشطة القادمة والسابقة.",
-    "feature.push_notifications.title": "الإشعارات الفورية", "feature.push_notifications.desc": "إشعارات عاجلة بالأخبار ونتائج المباريات.",
+    "feature.push_notifications.title": "الإشعارات الفورية", "feature.push_notifications.desc": "إشعارات عاجلة بالأخبار ونتائج المباريات ترسل من ادارة التطبيق بشكل مباشر.",
     "feature.cms.title": "إدارة المحتوى", "feature.cms.desc": "إضافة مقالات، تحليلات، وفيديوهات.",
-    "feature.bilingual_support.title": "واجهة ثنائية اللغة", "feature.bilingual_support.desc": "دعم كامل للغة العربية والإنجليزية.",
+    "feature.bilingual_support.title": "واجهة ثنائية اللغة", "feature.bilingual_support.desc": "دعم كامل للغةالإنجليزية.",
     "feature.live_match_center.title": "المباريات (Live Match Center)", "feature.live_match_center.desc": "متابعة حية للمباريات مع إحصائيات وتشكيلات.",
 
     // E-Commerce Features
@@ -45,7 +45,7 @@ export const i18nData = {
 
     // Forum Features
     "feature.forum_topics.title": "المناقشات والمواضيع", "feature.forum_topics.desc": "إنشاء مواضيع جديدة وتقسيم المنتدى إلى أقسام.",
-    "feature.nested_replies.title": "التعليقات والردود", "feature.nested_replies.desc": "إضافة تعليقات نصية وصور وردود متشعبة.",
+    "feature.nested_replies.title": "التعليقات والردود", "feature.nested_replies.desc": "إضافة تعليقات نصية وردود متشعبة.",
     "feature.polls.title": "استطلاعات الرأي", "feature.polls.desc": "إنشاء تصويت وعرض النتائج بشكل مباشر.",
     "feature.social_interaction.title": "التفاعل الاجتماعي", "feature.social_interaction.desc": "الإعجابات والتفاعل مع المشاركات.",
     "feature.forum_profiles.title": "الملفات الشخصية", "feature.forum_profiles.desc": "عرض عدد المشاركات ونظام أوسمة للأعضاء النشطين.",
@@ -62,13 +62,26 @@ export const i18nData = {
     "cart.empty": "التكوين فارغ. أضف ميزات للبدء!",
     "cart.subtotal": "المجموع الفرعي",
     "cart.total": "المجموع الكلي",
-    "cart.submit": "تنزيل ملخص PDF",
+    "cart.submit": "مراجعة و ارسال",
+    
+    // Review Modal
+    "review.title": "مراجعة طلبك",
+    "review.subtitle": "تأكد من اختياراتك قبل التحميل",
+    "review.selected_features": "الميزات المختارة",
+    "review.total_cost": "التكلفة الإجمالية",
+    "review.confirm_download": "تأكيد وتحميل PDF",
+    "review.cancel": "إلغاء",
+    "review.generating": "جاري إنشاء الملف...",
     
     // PDF
     "pdf.title": "ملخص تكوين تطبيق المشجعين",
+    "pdf.subtitle": "تقرير مفصل للميزات المختارة",
     "pdf.feature": "الميزة",
     "pdf.section": "القسم",
     "pdf.price": "السعر",
+    "pdf.total": "المجموع الإجمالي",
+    "pdf.date": "تاريخ الإنشاء",
+    "pdf.footer": "تم الإنشاء بواسطة Raqeem.team",
 
     // General
     "currency.usd": "$",
