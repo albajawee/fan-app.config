@@ -40,7 +40,7 @@ export const i18nData = {
     "feature.order_management.title": "إدارة الطلبات", "feature.order_management.desc": "مراجعة ومتابعة حالة الطلبات والشحن.",
     "feature.inventory_management.title": "إدارة المخزون", "feature.inventory_management.desc": "تحديث الكميات المتاحة وإشعارات انخفاض المخزون.",
     "feature.discounts_coupons.title": "العروض والخصومات", "feature.discounts_coupons.desc": "إنشاء خصومات موسمية وعروض حصرية.",
-    "feature.online_payment.title": "الدفع الإلكتروني + تجربة شراء", "feature.online_payment.desc": "تكامل مع بوابات الدفع وتجربة شراء سهلة.",
+    "feature.online_payment.title": "الدفع الإلكتروني", "feature.online_payment.desc": "تكامل مع بوابات الدفع وتجربة شراء سهلة.",
     "feature.reviews_ratings.title": "التقييمات والمراجعات", "feature.reviews_ratings.desc": "السماح للمستخدمين بتقييم وكتابة مراجعات.",
 
     // Forum Features

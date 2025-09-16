@@ -11,36 +11,36 @@ const featuresData = {
       "id": "core",
       "icon": "CoreIcon",
       "features": [
-        { "id": "account_management", "price": 750, "icon": "UserIcon", "isEssential": true },
-        { "id": "events", "price": 400, "icon": "CalendarIcon", "isEssential": true  },
-        { "id": "push_notifications", "price": 450, "icon": "BellIcon", "isEssential": true  },
-        { "id": "cms", "price": 600, "icon": "FileTextIcon" },
-        { "id": "bilingual_support", "price": 650, "icon": "GlobeIcon" },
-        { "id": "live_match_center", "price": 750, "icon": "WatchIcon" }
+        { "id": "account_management", "price": 550, "icon": "UserIcon", "isEssential": true },
+        { "id": "events", "price": 250, "icon": "CalendarIcon", "isEssential": true  },
+        { "id": "push_notifications", "price": 400, "icon": "BellIcon", "isEssential": true  },
+        { "id": "cms", "price": 200, "icon": "FileTextIcon" },
+        { "id": "bilingual_support", "price": 750, "icon": "GlobeIcon" },
+        { "id": "live_match_center", "price": 650, "icon": "WatchIcon" }
       ]
     },
     {
       "id": "ecommerce",
       "icon": "EcommerceIcon",
       "features": [
-        { "id": "product_management", "price": 450, "icon": "PackageIcon", "isEssential": true  },
-        { "id": "order_management", "price": 600, "icon": "ClipboardListIcon", "isEssential": true  },
-        { "id": "inventory_management", "price": 400, "icon": "ArchiveIcon", "isEssential": true  },
-        { "id": "discounts_coupons", "price": 300, "icon": "TicketIcon" },
-        { "id": "online_payment", "price": 750, "icon": "CreditCardIcon" },
-        { "id": "reviews_ratings", "price": 300, "icon": "MessageSquareIcon" }
+        { "id": "product_management", "price": 200, "icon": "PackageIcon", "isEssential": true  },
+        { "id": "order_management", "price": 450, "icon": "ClipboardListIcon", "isEssential": true  },
+        { "id": "inventory_management", "price": 200, "icon": "ArchiveIcon", "isEssential": true  },
+        { "id": "discounts_coupons", "price": 150, "icon": "TicketIcon" },
+        { "id": "online_payment", "price": 600, "icon": "CreditCardIcon" },
+        { "id": "reviews_ratings", "price": 150, "icon": "MessageSquareIcon" }
       ]
     },
     {
       "id": "forum",
       "icon": "ForumIcon",
       "features": [
-        { "id": "moderation_tools", "price": 450, "icon": "ShieldIcon", "isEssential": true  },
-        { "id": "forum_profiles", "price": 400, "icon": "AwardIcon", "isEssential": true  },
-        { "id": "forum_topics", "price": 450, "icon": "MessageCircleIcon", "isEssential": true  },
-        { "id": "nested_replies", "price": 400, "icon": "GitMergeIcon", "isEssential": true  },
-        { "id": "polls", "price": 300, "icon": "BarChart2Icon" },
-        { "id": "social_interaction", "price": 250, "icon": "Share2Icon" },
+        { "id": "moderation_tools", "price": 300, "icon": "ShieldIcon", "isEssential": true  },
+        { "id": "forum_profiles", "price": 350, "icon": "AwardIcon", "isEssential": true  },
+        { "id": "forum_topics", "price": 150, "icon": "MessageCircleIcon", "isEssential": true  },
+        { "id": "nested_replies", "price": 200, "icon": "GitMergeIcon", "isEssential": true  },
+        { "id": "polls", "price": 150, "icon": "BarChart2Icon" },
+        { "id": "social_interaction", "price": 200, "icon": "Share2Icon" },
         { "id": "forum_notifications", "price": 300, "icon": "BellIcon" },
         
       ]
@@ -49,7 +49,7 @@ const featuresData = {
       "id": "addons",
       "icon": "PlusIcon",
        "features": [
-        { "id": "addons_analytics", "price": 450, "icon": "BarChart2Icon" },
+        { "id": "addons_analytics", "price": 350, "icon": "BarChart2Icon" },
         { "id": "addons_api", "price": 250, "icon": "GitMergeIcon" },
         { "id": "addons_maintenance", "price": 250, "icon": "ShieldIcon" }
       ]
