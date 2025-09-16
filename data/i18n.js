@@ -53,9 +53,9 @@ export const i18nData = {
     "feature.moderation_tools.title": "إدارة المنتدى", "feature.moderation_tools.desc": "تعيين مشرفين وحذف المشاركات المخالفة.",
     
     // Add-ons
-    "feature.addons_analytics.title": "إحصائيات وتقارير", "feature.addons_analytics.desc": "تقارير عن المبيعات، التفاعل، والمباريات.",
-    "feature.addons_api.title": "ربط API خارجي للمباريات", "feature.addons_api.desc": "عرض نتائج المباريات من مصادر رسمية.",
-    "feature.addons_maintenance.title": "صيانة شهرية + استضافة", "feature.addons_maintenance.desc": "تشمل الصيانة الدورية والاستضافة (التكلفة شهرية).",
+    "feature.addons_maintenance.title": "صيانة  + استضافة", "feature.addons_maintenance.desc": "تشمل الصيانة الدورية والاستضافة (التكلفة شهرية).",
+    "feature.addons_api.title": "ربط API خارجي للمباريات", "feature.addons_api.desc": "عرض نتائج المباريات من مصادر رسمية (التكلفة شهرية).",
+    "feature.addons_analytics.title": "إحصائيات وتقارير بواسطة الذكاء الاصطناعي", "feature.addons_analytics.desc": "(التكلفة شهرية) تقارير عن المبيعات، التفاعل، والمباريات.",
 
     // Cart
     "cart.title": "تكوينك الحالي",
